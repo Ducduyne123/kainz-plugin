@@ -23,7 +23,10 @@
         try {
             var api = getAPI();
             var React = g.React || (api.metro && api.metro.common && api.metro.common.React);
-            if (!React) return null;
+            if (!React) {
+                showToast("Không tìm thấy React");
+                return null;
+            }
 
             var Forms = (api.ui && api.ui.components && api.ui.components.Forms) || {};
             var General = (api.ui && api.ui.components && api.ui.components.General) || {};
@@ -33,7 +36,7 @@
             var Text = General.Text || "RCTText";
             var FormSection = Forms.FormSection || View;
             var FormRow = Forms.FormRow || View;
-            var FormSwitch = Forms.FormSwitch || View;
+            var FormSwitchRow = Forms.FormSwitchRow || Forms.FormSwitch || View;
             var FormDivider = Forms.FormDivider || View;
 
             var useState = React.useState;
@@ -52,7 +55,7 @@
                     })
                 ),
                 e(FormSection, { title: "TÙY CHỈNH TÍNH NĂNG" },
-                    e(FormSwitch, {
+                    e(FormSwitchRow, {
                         label: "Fake Nitro & Identity",
                         subLabel: "Mở khóa Nitro Type 2 trên tài khoản",
                         value: nitroState[0],
@@ -62,7 +65,7 @@
                         }
                     }),
                     e(FormDivider, null),
-                    e(FormSwitch, {
+                    e(FormSwitchRow, {
                         label: "Voice Changer DSP",
                         subLabel: "Xử lý âm thanh micro thời gian thực",
                         value: voiceDspState[0],
@@ -72,7 +75,7 @@
                         }
                     }),
                     e(FormDivider, null),
-                    e(FormSwitch, {
+                    e(FormSwitchRow, {
                         label: "Soundboard Mobile",
                         subLabel: "Thông báo âm thanh khi bật/tắt mic",
                         value: soundboardState[0],
@@ -84,6 +87,7 @@
                 )
             );
         } catch (err) {
+            showToast("Lỗi Menu: " + err.message);
             return null;
         }
     }
