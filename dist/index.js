@@ -1,2 +1,147 @@
-var plugin=(()=>{var z=Object.create;var m=Object.defineProperty;var J=Object.getOwnPropertyDescriptor;var X=Object.getOwnPropertyNames;var _=Object.getPrototypeOf,q=Object.prototype.hasOwnProperty;var y=(e,t)=>()=>(t||e((t={exports:{}}).exports,t),t.exports),Q=(e,t)=>{for(var r in t)m(e,r,{get:t[r],enumerable:!0})},C=(e,t,r,a)=>{if(t&&typeof t=="object"||typeof t=="function")for(let o of X(t))!q.call(e,o)&&o!==r&&m(e,o,{get:()=>t[o],enumerable:!(a=J(t,o))||a.enumerable});return e};var w=(e,t,r)=>(r=e!=null?z(_(e)):{},C(t||!e||!e.__esModule?m(r,"default",{value:e,enumerable:!0}):r,e)),W=e=>C(m({},"__esModule",{value:!0}),e);var V=y((de,L)=>{var Y=typeof window<"u"?window:globalThis,$=Y.vendetta||{};L.exports=$.metro||{}});var I=y((ge,k)=>{var ee=typeof window<"u"?window:globalThis,te=ee.vendetta||{};k.exports=te.patcher||{}});var K=y((he,F)=>{var oe=typeof window<"u"?window:globalThis,ne=oe.vendetta||{};F.exports=ne.ui.toasts||{}});var H=y((pe,R)=>{var re=typeof window<"u"?window:globalThis;R.exports=re.vendetta||{}});var ue={};Q(ue,{SettingsComponent:()=>se,default:()=>ce,onLoad:()=>U,onUnload:()=>A,settings:()=>ae,start:()=>Z,stop:()=>E});var l=w(V()),c=w(I()),S=w(K()),T=w(H());var b=typeof window<"u"?window:typeof globalThis<"u"?globalThis:{},s=b.vendetta||b.revenge||b.bunny||{},P=b.React||s.metro&&s.metro.common&&s.metro.common.React;function u(){if(!P)return null;let{useState:e}=P,[t,r]=e(!0),[a,o]=e(!0),[h,G]=e(!0),p=s.ui&&s.ui.components&&s.ui.components.Forms||{},D=s.ui&&s.ui.components&&s.ui.components.General||{},O=D.ScrollView||"RCTScrollView",f=D.View||"RCTView",j=D.Text||"RCTText",x=p.FormSection||f,B=p.FormRow||f,N=p.FormSwitch||f,M=p.FormDivider||f,i=P.createElement;return i(O,{style:{flex:1,padding:16,backgroundColor:"#12141e"}},i(x,{title:"KAINZ DSP - TR\u1EA0NG TH\xC1I H\u1EC6 TH\u1ED0NG"},i(B,{label:"Tr\u1EA1ng Th\xE1i Plugin",subLabel:"KAINZ DSP Engine v1.0.0 \u0111ang ho\u1EA1t \u0111\u1ED9ng",leading:i(j,{style:{fontSize:18}},"\u{1F7E2}")})),i(x,{title:"C\u1EA4U H\xCCNH T\xCDNH N\u0102NG"},i(N,{label:"Fake Nitro & Identity",subLabel:"M\u1EDF kh\xF3a Nitro Type 2 tr\xEAn t\xE0i kho\u1EA3n",value:t,onValueChange:d=>r(d)}),i(M,null),i(N,{label:"Voice DSP Engine",subLabel:"X\u1EED l\xFD \xE2m thanh micro theo th\u1EDDi gian th\u1EF1c",value:a,onValueChange:d=>o(d)}),i(M,null),i(N,{label:"Soundboard Triggers",subLabel:"Ph\xE1t \xE2m thanh th\xF4ng b\xE1o khi b\u1EADt/t\u1EAFt mic",value:h,onValueChange:d=>G(d)})))}var ie=["http://10.0.2.2:5050/log","http://192.168.1.164:5050/log","http://127.0.0.1:5050/log"];function n(e,t,r=null){let a=JSON.stringify({level:e,message:t,data:r,time:new Date().toLocaleTimeString()});for(let o of ie)try{fetch(o,{method:"POST",headers:{"Content-Type":"application/json"},body:a}).catch(()=>{})}catch{}}function v(e){try{if(typeof S.showToast=="function")try{(0,S.showToast)(e)}catch{(0,S.showToast)({content:e})}}catch(t){n("warn","Toast error: "+t.message)}}try{let e=typeof window<"u"?window:typeof globalThis<"u"?globalThis:{};n("info","\u{1F680} KAINZ DSP: File index.js da duoc Discord eval thanh cong!",{hasVendetta:!!e.vendetta,hasRevenge:!!e.revenge,hasBunny:!!e.bunny})}catch(e){n("error","Loi khi eval top-level index.js: "+e.message)}var g=[],U=()=>{n("info","\u25B6\uFE0F KAINZ DSP: Ham onLoad() dang duoc goi boi Revenge!");try{T.logger&&typeof T.logger.info=="function"&&T.logger.info("KAINZ DSP Plugin loading..."),v("KAINZ DSP: \u0110\xE3 K\xEDch Ho\u1EA1t Th\xE0nh C\xF4ng!");try{let e=l.findByStoreName?(0,l.findByStoreName)("UserStore"):null;if(n("info","Tim UserStore:",{found:!!e}),e&&typeof e.getCurrentUser=="function"&&typeof c.after=="function"){let t=(0,c.after)("getCurrentUser",e,(a,o)=>{if(o)try{o.premiumType=2}catch{try{Object.defineProperty(o,"premiumType",{value:2,writable:!0,configurable:!0})}catch{}}return o});g.push(t),n("success","\u2705 Da patch getCurrentUser tren UserStore");let r=(0,c.after)("getUser",e,(a,o)=>{if(o)try{let h=e.getCurrentUser();h&&o.id===h.id&&(o.premiumType=2)}catch{try{Object.defineProperty(o,"premiumType",{value:2,writable:!0,configurable:!0})}catch{}}return o});g.push(r),n("success","\u2705 Da patch getUser tren UserStore")}else n("warn","\u26A0\uFE0F UserStore khong tim thay hoac khong ho tro getCurrentUser")}catch(e){n("error","\u274C Loi khi patch UserStore: "+e.message)}try{let e=l.findByProps?(0,l.findByProps)("setMicrophoneMute"):null;if(n("info","Tim AudioManager:",{found:!!e}),e&&typeof e.setMicrophoneMute=="function"&&typeof c.before=="function"){let t=(0,c.before)("setMicrophoneMute",e,r=>{r[0]||(n("info","\u{1F399}\uFE0F Mic dang bat - Voice DSP active"),v("Mic \u0111ang m\u1EDF - KAINZ DSP \u0111ang ho\u1EA1t \u0111\u1ED9ng"))});g.push(t),n("success","\u2705 Da patch setMicrophoneMute tren AudioManager")}else n("warn","\u26A0\uFE0F AudioManager khong tim thay")}catch(e){n("error","\u274C Loi khi patch AudioManager: "+e.message)}n("success","\u{1F389} KAINZ DSP da LOAD HOAN TAT! Plugin da bat.")}catch(e){n("error","\u{1F4A5} CRASH trong onLoad: "+e.message,{stack:e.stack}),v("L\u1ED7i KAINZ DSP: "+e.message)}},A=()=>{n("info","\u23F9\uFE0F KAINZ DSP: Ham onUnload() dang duoc goi de tat plugin.");try{for(let e of g)if(typeof e=="function")try{e()}catch{}g=[],n("success","\u2705 Da go bo toan bo patches. Plugin da tat."),v("KAINZ DSP: \u0110\xE3 T\u1EAFt Plugin!")}catch(e){n("error","\u274C Loi khi unload: "+e.message)}},Z=U,E=A,ae=u,se=u,ce={onLoad:U,onUnload:A,start:Z,stop:E,settings:u,Settings:u};return W(ue);})();
-plugin.default = plugin;
+var vendettaPlugin = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // src/index.js
+  var src_exports = {};
+  __export(src_exports, {
+    default: () => src_default,
+    onLoad: () => onLoad,
+    onUnload: () => onUnload,
+    start: () => start,
+    stop: () => stop
+  });
+  var g = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : {};
+  function getVendetta() {
+    return g.vendetta || g.revenge || g.bunny || {};
+  }
+  var patches = [];
+  function notifyUser(msg) {
+    try {
+      const v = getVendetta();
+      if (v.ui && v.ui.toasts && typeof v.ui.toasts.showToast === "function") {
+        try {
+          v.ui.toasts.showToast(msg);
+        } catch {
+          v.ui.toasts.showToast({ content: msg });
+        }
+      }
+    } catch {
+    }
+  }
+  function onLoad() {
+    try {
+      const v = getVendetta();
+      const metro = v.metro || {};
+      const patcher = v.patcher || {};
+      const logger = v.logger || console;
+      if (logger.info) {
+        logger.info("KAINZ DSP Plugin loading...");
+      }
+      notifyUser("KAINZ DSP: \u0110\xE3 K\xEDch Ho\u1EA1t!");
+      try {
+        const findByStoreName = metro.findByStoreName;
+        const UserStore = typeof findByStoreName === "function" ? findByStoreName("UserStore") : null;
+        if (UserStore && typeof UserStore.getCurrentUser === "function" && typeof patcher.after === "function") {
+          const unpatch1 = patcher.after("getCurrentUser", UserStore, (args, user) => {
+            if (user) {
+              try {
+                user.premiumType = 2;
+              } catch {
+                try {
+                  Object.defineProperty(user, "premiumType", {
+                    value: 2,
+                    writable: true,
+                    configurable: true
+                  });
+                } catch {
+                }
+              }
+            }
+            return user;
+          });
+          patches.push(unpatch1);
+          const unpatch2 = patcher.after("getUser", UserStore, (args, user) => {
+            if (user) {
+              try {
+                const currentUser = UserStore.getCurrentUser();
+                if (currentUser && user.id === currentUser.id) {
+                  user.premiumType = 2;
+                }
+              } catch {
+                try {
+                  Object.defineProperty(user, "premiumType", {
+                    value: 2,
+                    writable: true,
+                    configurable: true
+                  });
+                } catch {
+                }
+              }
+            }
+            return user;
+          });
+          patches.push(unpatch2);
+        }
+      } catch (e) {
+      }
+      try {
+        const findByProps = metro.findByProps;
+        const AudioManager = typeof findByProps === "function" ? findByProps("setMicrophoneMute") : null;
+        if (AudioManager && typeof AudioManager.setMicrophoneMute === "function" && typeof patcher.before === "function") {
+          const unpatchMic = patcher.before("setMicrophoneMute", AudioManager, (args) => {
+            const isMuted = args[0];
+            if (!isMuted) {
+              notifyUser("Mic \u0111ang m\u1EDF - KAINZ DSP \u0111ang ho\u1EA1t \u0111\u1ED9ng");
+            }
+          });
+          patches.push(unpatchMic);
+        }
+      } catch (e) {
+      }
+    } catch (err) {
+      notifyUser("L\u1ED7i b\u1EADt KAINZ DSP: " + err.message);
+    }
+  }
+  function onUnload() {
+    try {
+      for (const unpatch of patches) {
+        if (typeof unpatch === "function") {
+          try {
+            unpatch();
+          } catch {
+          }
+        }
+      }
+      patches = [];
+      notifyUser("KAINZ DSP: \u0110\xE3 T\u1EAFt Plugin!");
+    } catch {
+    }
+  }
+  var start = onLoad;
+  var stop = onUnload;
+  var src_default = {
+    onLoad,
+    onUnload,
+    start,
+    stop
+  };
+  return __toCommonJS(src_exports);
+})();
+vendettaPlugin.default = vendettaPlugin;
+vendettaPlugin;
