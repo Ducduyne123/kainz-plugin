@@ -92,6 +92,20 @@
         }
     }
 
+    function showGreetingAlert() {
+        try {
+            var api = getAPI();
+            if (api.ui && api.ui.alerts && typeof api.ui.alerts.showConfirmationAlert === "function") {
+                api.ui.alerts.showConfirmationAlert({
+                    title: "KAINZ DSP",
+                    content: "Plugin đã chạy thành công!\nĐể chỉnh tính năng, hãy chạm trực tiếp vào dòng chữ KAINZ DSP trong danh sách Plugin.",
+                    confirmText: "Đã hiểu",
+                    cancelText: "Đóng"
+                });
+            }
+        } catch (e) {}
+    }
+
     function onLoad() {
         try {
             var api = getAPI();
@@ -104,6 +118,9 @@
             }
 
             showToast("KAINZ DSP: Đã Kích Hoạt!");
+            
+            // Hiện popup alert để báo cho user
+            setTimeout(showGreetingAlert, 1000);
 
             // 1. Fake Nitro / UserStore
             try {
