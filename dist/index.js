@@ -2,6 +2,17 @@
     var g = typeof window !== "undefined" ? window : (typeof globalThis !== "undefined" ? globalThis : {});
     var patches = [];
 
+    // Bộ nhớ tạm thời trong phiên chạy
+    var State = {
+        nitro: true,
+        voiceDsp: true,
+        soundboard: true,
+        customNameEnabled: false,
+        customName: "Kainz God",
+        customBgEnabled: false,
+        customBgColor: "#000000" // Màu đen mặc định
+    };
+
     function getAPI() {
         return g.vendetta || g.revenge || g.bunny || {};
     }
@@ -10,23 +21,17 @@
         try {
             var api = getAPI();
             if (api.ui && api.ui.toasts && typeof api.ui.toasts.showToast === "function") {
-                try {
-                    api.ui.toasts.showToast(msg);
-                } catch (e) {
-                    api.ui.toasts.showToast({ content: msg });
-                }
+                try { api.ui.toasts.showToast(msg); }
+                catch (e) { api.ui.toasts.showToast({ content: msg }); }
             }
-        } catch (err) {}
+        } catch (err) { }
     }
 
     function Settings() {
         try {
             var api = getAPI();
             var React = g.React || (api.metro && api.metro.common && api.metro.common.React);
-            if (!React) {
-                showToast("Không tìm thấy React");
-                return null;
-            }
+            if (!React) return null;
 
             var Forms = (api.ui && api.ui.components && api.ui.components.Forms) || {};
             var General = (api.ui && api.ui.components && api.ui.components.General) || {};
@@ -34,76 +39,95 @@
             var ScrollView = General.ScrollView || "RCTScrollView";
             var View = General.View || "RCTView";
             var Text = General.Text || "RCTText";
+            var TextInput = General.TextInput || "RCTSinglelineTextInputView";
             var FormSection = Forms.FormSection || View;
             var FormRow = Forms.FormRow || View;
             var FormSwitchRow = Forms.FormSwitchRow || Forms.FormSwitch || View;
             var FormDivider = Forms.FormDivider || View;
+            var FormInput = Forms.FormInput || View;
 
             var useState = React.useState;
             var e = React.createElement;
 
-            var nitroState = useState(true);
-            var voiceDspState = useState(true);
-            var soundboardState = useState(true);
+            // React States (đồng bộ với biến toàn cục State)
+            var nitroState = useState(State.nitro);
+            var voiceDspState = useState(State.voiceDsp);
+            var sbState = useState(State.soundboard);
+            var cNameEnabledState = useState(State.customNameEnabled);
+            var cNameState = useState(State.customName);
+            var cBgEnabledState = useState(State.customBgEnabled);
+            var cBgColorState = useState(State.customBgColor);
+
+            var updateState = function (key, val, setter) {
+                State[key] = val;
+                setter(val);
+                showToast("Đã lưu: " + key);
+            };
 
             return e(ScrollView, { style: { flex: 1, padding: 16 } },
-                e(FormSection, { title: "KAINZ DSP - TRẠNG THÁI" },
-                    e(FormRow, {
-                        label: "Trạng Thái Plugin",
-                        subLabel: "KAINZ DSP Engine v1.0.0 đang hoạt động",
-                        leading: e(Text, { style: { fontSize: 18 } }, "🟢")
-                    })
-                ),
-                e(FormSection, { title: "TÙY CHỈNH TÍNH NĂNG" },
-                    e(FormSwitchRow, {
-                        label: "Fake Nitro & Identity",
-                        subLabel: "Mở khóa Nitro Type 2 trên tài khoản",
-                        value: nitroState[0],
-                        onValueChange: function(v) { 
-                            nitroState[1](v);
-                            showToast(v ? "Đã bật Fake Nitro" : "Đã tắt Fake Nitro");
-                        }
-                    }),
-                    e(FormDivider, null),
+                e(FormSection, { title: "KAINZ DSP - BỘ LỌC ÂM THANH" },
                     e(FormSwitchRow, {
                         label: "Voice Changer DSP",
                         subLabel: "Xử lý âm thanh micro thời gian thực",
                         value: voiceDspState[0],
-                        onValueChange: function(v) { 
-                            voiceDspState[1](v);
-                            showToast(v ? "Đã bật Voice DSP" : "Đã tắt Voice DSP");
-                        }
+                        onValueChange: function (v) { updateState("voiceDsp", v, voiceDspState[1]); }
                     }),
                     e(FormDivider, null),
                     e(FormSwitchRow, {
                         label: "Soundboard Mobile",
                         subLabel: "Thông báo âm thanh khi bật/tắt mic",
-                        value: soundboardState[0],
-                        onValueChange: function(v) { 
-                            soundboardState[1](v);
-                            showToast(v ? "Đã bật Soundboard" : "Đã tắt Soundboard");
-                        }
+                        value: sbState[0],
+                        onValueChange: function (v) { updateState("soundboard", v, sbState[1]); }
+                    })
+                ),
+                e(View, { style: { height: 20 } }),
+                e(FormSection, { title: "TÙY CHỈNH TÀI KHOẢN (FAKE)" },
+                    e(FormSwitchRow, {
+                        label: "Fake Nitro Type 2",
+                        subLabel: "Mở khóa giao diện Nitro, Avatar động",
+                        value: nitroState[0],
+                        onValueChange: function (v) { updateState("nitro", v, nitroState[1]); }
+                    }),
+                    e(FormDivider, null),
+                    e(FormSwitchRow, {
+                        label: "Bật Fake Tên Người Dùng",
+                        subLabel: "Đổi tên bạn thành tên tùy chỉnh bên dưới",
+                        value: cNameEnabledState[0],
+                        onValueChange: function (v) { updateState("customNameEnabled", v, cNameEnabledState[1]); }
+                    }),
+                    e(FormInput, {
+                        title: "Nhập Tên Giả",
+                        value: cNameState[0],
+                        onChange: function (v) {
+                            State.customName = v;
+                            cNameState[1](v);
+                        },
+                        placeholder: "VD: Kainz God"
+                    })
+                ),
+                e(View, { style: { height: 20 } }),
+                e(FormSection, { title: "TÙY CHỈNH GIAO DIỆN" },
+                    e(FormSwitchRow, {
+                        label: "Bật Đổi Màu Nền (Background)",
+                        subLabel: "Ghi đè màu nền Discord bằng mã màu của bạn",
+                        value: cBgEnabledState[0],
+                        onValueChange: function (v) { updateState("customBgEnabled", v, cBgEnabledState[1]); }
+                    }),
+                    e(FormInput, {
+                        title: "Nhập Mã Màu Nền (Hex Color)",
+                        value: cBgColorState[0],
+                        onChange: function (v) {
+                            State.customBgColor = v;
+                            cBgColorState[1](v);
+                        },
+                        placeholder: "VD: #FF0000 (Đỏ) hoặc #000000 (Đen)"
                     })
                 )
             );
         } catch (err) {
-            showToast("Lỗi Menu: " + err.message);
+            showToast("Lỗi Render Menu: " + err.message);
             return null;
         }
-    }
-
-    function showGreetingAlert() {
-        try {
-            var api = getAPI();
-            if (api.ui && api.ui.alerts && typeof api.ui.alerts.showConfirmationAlert === "function") {
-                api.ui.alerts.showConfirmationAlert({
-                    title: "KAINZ DSP",
-                    content: "Plugin đã chạy thành công!\nĐể chỉnh tính năng, hãy chạm trực tiếp vào dòng chữ KAINZ DSP trong danh sách Plugin.",
-                    confirmText: "Đã hiểu",
-                    cancelText: "Đóng"
-                });
-            }
-        } catch (e) {}
     }
 
     function onLoad() {
@@ -111,67 +135,69 @@
             var api = getAPI();
             var metro = api.metro || {};
             var patcher = api.patcher || {};
-            var logger = api.logger || console;
 
-            if (logger.info) {
-                logger.info("KAINZ DSP Plugin loading...");
-            }
+            showToast("KAINZ DSP: Đã Kích Hoạt Module!");
 
-            showToast("KAINZ DSP: Đã Kích Hoạt!");
-            
-            // Hiện popup alert để báo cho user
-            setTimeout(showGreetingAlert, 1000);
-
-            // 1. Fake Nitro / UserStore
+            // 1. Fake User (Nitro & Tên Giả)
             try {
                 if (typeof metro.findByStoreName === "function" && typeof patcher.after === "function") {
                     var UserStore = metro.findByStoreName("UserStore");
-                    if (UserStore && typeof UserStore.getCurrentUser === "function") {
-                        var u1 = patcher.after("getCurrentUser", UserStore, function(args, user) {
-                            if (user) {
-                                try { user.premiumType = 2; } catch (e) {
-                                    try { Object.defineProperty(user, "premiumType", { value: 2, writable: true, configurable: true }); } catch (e2) {}
-                                }
-                            }
-                            return user;
-                        });
-                        patches.push(u1);
+                    if (UserStore) {
+                        var patchUser = function (args, user) {
+                            if (!user) return user;
 
-                        var u2 = patcher.after("getUser", UserStore, function(args, user) {
-                            if (user) {
-                                try {
-                                    var currentUser = UserStore.getCurrentUser();
-                                    if (currentUser && user.id === currentUser.id) {
-                                        user.premiumType = 2;
-                                    }
-                                } catch (e) {
-                                    try { Object.defineProperty(user, "premiumType", { value: 2, writable: true, configurable: true }); } catch (e2) {}
-                                }
+                            // Tạo object copy để không bị lỗi readonly (freeze) của Hermes
+                            var fakeUser = Object.create(user);
+
+                            if (State.nitro) {
+                                fakeUser.premiumType = 2;
                             }
-                            return user;
-                        });
-                        patches.push(u2);
+                            if (State.customNameEnabled && State.customName) {
+                                fakeUser.username = State.customName;
+                                fakeUser.globalName = State.customName;
+                            }
+                            return fakeUser;
+                        };
+
+                        if (typeof UserStore.getCurrentUser === "function") {
+                            patches.push(patcher.after("getCurrentUser", UserStore, patchUser));
+                        }
+                        if (typeof UserStore.getUser === "function") {
+                            patches.push(patcher.after("getUser", UserStore, patchUser));
+                        }
                     }
                 }
-            } catch (err) {}
+            } catch (err) { }
 
-            // 2. Audio Mic Hook
+            // 2. Custom Background Color
             try {
-                if (typeof metro.findByProps === "function" && typeof patcher.before === "function") {
-                    var AudioManager = metro.findByProps("setMicrophoneMute");
-                    if (AudioManager && typeof AudioManager.setMicrophoneMute === "function") {
-                        var uMic = patcher.before("setMicrophoneMute", AudioManager, function(args) {
-                            if (!args[0]) {
-                                showToast("Mic đang mở - KAINZ DSP đang hoạt động");
-                            }
-                        });
-                        patches.push(uMic);
-                    }
+                var colors = metro.findByProps("resolveSemanticColor") || metro.findByProps("getSemanticColor");
+                if (colors) {
+                    var hookFunc = colors.resolveSemanticColor ? "resolveSemanticColor" : "getSemanticColor";
+                    patches.push(patcher.instead(hookFunc, colors, function (args, orig) {
+                        // args[1] thường là tên màu (vd: BACKGROUND_PRIMARY, BACKGROUND_SECONDARY)
+                        if (State.customBgEnabled && State.customBgColor && typeof args[1] === "string" && args[1].includes("BACKGROUND")) {
+                            return State.customBgColor;
+                        }
+                        return orig.apply(this, args);
+                    }));
                 }
-            } catch (err) {}
+            } catch (err) { }
+
+            // 3. Audio Hook (Mic)
+            try {
+                var AudioManager = metro.findByProps("setMicrophoneMute");
+                if (AudioManager && typeof AudioManager.setMicrophoneMute === "function") {
+                    patches.push(patcher.before("setMicrophoneMute", AudioManager, function (args) {
+                        if (!args[0] && State.voiceDsp) {
+                            showToast("🎤 KAINZ DSP đang kích hoạt vào Mic!");
+                        }
+                    }));
+                }
+            } catch (err) { }
 
         } catch (globalErr) {
-            showToast("Lỗi KAINZ DSP: " + globalErr.message);
+            showToast("Lỗi Plugin: " + globalErr.message);
         }
     }
 
@@ -179,12 +205,12 @@
         try {
             for (var i = 0; i < patches.length; i++) {
                 if (typeof patches[i] === "function") {
-                    try { patches[i](); } catch (e) {}
+                    try { patches[i](); } catch (e) { }
                 }
             }
             patches = [];
-            showToast("KAINZ DSP: Đã Tắt!");
-        } catch (err) {}
+            showToast("KAINZ DSP: Đã Tắt Toàn Bộ!");
+        } catch (err) { }
     }
 
     var pluginObj = {
