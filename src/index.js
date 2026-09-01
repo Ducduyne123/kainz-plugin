@@ -1,2 +1,57 @@
-var plugin=(()=>{var f=Object.defineProperty;var m=Object.getOwnPropertyDescriptor;var d=Object.getOwnPropertyNames;var M=Object.prototype.hasOwnProperty;var a=(t=>typeof require<"u"?require:typeof Proxy<"u"?new Proxy(t,{get:(o,r)=>(typeof require<"u"?require:o)[r]}):t)(function(t){if(typeof require<"u")return require.apply(this,arguments);throw Error('Dynamic require of "'+t+'" is not supported')});var P=(t,o)=>{for(var r in o)f(t,r,{get:o[r],enumerable:!0})},S=(t,o,r,e)=>{if(o&&typeof o=="object"||typeof o=="function")for(let n of d(o))!M.call(t,n)&&n!==r&&f(t,n,{get:()=>o[n],enumerable:!(e=m(o,n))||e.enumerable});return t};var U=t=>S(f({},"__esModule",{value:!0}),t);var D={};P(D,{onLoad:()=>l,onUnload:()=>A});var g=a("@vendetta/metro"),s=a("@vendetta/patcher"),u=a("@vendetta/ui/toasts"),c=a("@vendetta"),p=(0,g.findByStoreName)("UserStore"),h=(0,g.findByProps)("setMicrophoneMute"),i=[],l=()=>{if(c.logger.info("KAINZ DSP Plugin loading..."),(0,u.showToast)("KAINZ DSP Plugin Da Bat!"),p){let t=(0,s.after)("getCurrentUser",p,(r,e)=>(e&&(e.premiumType=2),e));i.push(t);let o=(0,s.after)("getUser",p,(r,e)=>{if(e){let n=p.getCurrentUser();n&&e.id===n.id&&(e.premiumType=2)}return e});i.push(o)}else c.logger.warn("KAINZ DSP: UserStore khong tim thay");if(h){let t=(0,s.before)("setMicrophoneMute",h,o=>{o[0]||(0,u.showToast)("Mic dang mo - KAINZ DSP dang hoat dong")});i.push(t)}else c.logger.warn("KAINZ DSP: AudioManager khong tim thay")},A=()=>{for(let t of i)t();i=[],(0,u.showToast)("KAINZ DSP Plugin Da Tat!")};return U(D);})();
-plugin.default = plugin;
+import { findByStoreName, findByProps } from "@vendetta/metro";
+import { after, before } from "@vendetta/patcher";
+import { showToast } from "@vendetta/ui/toasts";
+import { logger } from "@vendetta";
+
+const UserStore = findByStoreName("UserStore");
+const AudioManager = findByProps("setMicrophoneMute");
+
+let patches = [];
+
+export const onLoad = () => {
+    logger.info("KAINZ DSP Plugin loading...");
+    showToast("KAINZ DSP Plugin Da Bat!");
+
+    if (UserStore) {
+        const unpatchGetCurrentUser = after("getCurrentUser", UserStore, (args, user) => {
+            if (user) {
+                user.premiumType = 2;
+            }
+            return user;
+        });
+        patches.push(unpatchGetCurrentUser);
+
+        const unpatchGetUser = after("getUser", UserStore, (args, user) => {
+            if (user) {
+                const currentUser = UserStore.getCurrentUser();
+                if (currentUser && user.id === currentUser.id) {
+                    user.premiumType = 2;
+                }
+            }
+            return user;
+        });
+        patches.push(unpatchGetUser);
+    } else {
+        logger.warn("KAINZ DSP: UserStore khong tim thay");
+    }
+
+    if (AudioManager) {
+        const unpatchMic = before("setMicrophoneMute", AudioManager, (args) => {
+            const isMuted = args[0];
+            if (!isMuted) {
+                showToast("Mic dang mo - KAINZ DSP dang hoat dong");
+            }
+        });
+        patches.push(unpatchMic);
+    } else {
+        logger.warn("KAINZ DSP: AudioManager khong tim thay");
+    }
+};
+
+export const onUnload = () => {
+    for (const unpatch of patches) {
+        unpatch();
+    }
+    patches = [];
+    showToast("KAINZ DSP Plugin Da Tat!");
+};
