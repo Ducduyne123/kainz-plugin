@@ -1,0 +1,14 @@
+{
+  "name": "kainz-plugin",
+  "version": "1.0.0",
+  "description": "KAINZ Mobile Plugin for Vendetta/Bunny",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch"
+  },
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.21.5"
+  }
+}

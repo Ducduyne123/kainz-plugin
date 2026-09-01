@@ -1,0 +1,15 @@
+{
+    "name": "KAINZ DSP",
+    "description": "Voice Changer, Soundboard va Identity Fake cho Discord Android.",
+    "authors": [
+        {
+            "name": "Antigravity",
+            "id": "123456789"
+        }
+    ],
+    "main": "index.js",
+    "hash": "",
+    "vendetta": {
+        "icon": "ic_mic"
+    }
+}
